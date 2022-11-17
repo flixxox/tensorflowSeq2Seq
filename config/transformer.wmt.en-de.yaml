@@ -1,0 +1,69 @@
+# Pipeline Arguments
+qsub_mem_train:   '16G'
+qsub_time_train:  '168:00:00'
+qsub_mem_search:  '8G'
+qsub_time_search: '2:00:00'
+
+train_src:  "~/data/wmt14/en-de/train.en"
+train_tgt:  "~/data/wmt14/en-de/train.de"
+
+dev_src:    "~/data/wmt14/en-de/valid.en"
+dev_tgt:    "~/data/wmt14/en-de/valid.de"
+dev_ref:    "~/data/wmt14/en-de/raw/valid.de"
+
+test_src:   "~/data/wmt14/en-de/test.en"
+test_tgt:   "~/data/wmt14/en-de/test.de"
+test_ref:   "~/data/wmt14/en-de/raw/test.de"
+
+quant_src:  "~/data/wmt14/en-de/valid.en"
+quant_tgt:  "~/data/wmt14/en-de/valid.de"
+
+vocab_src:  "~/data/wmt14/en-de/source.vocab.pkl"
+vocab_tgt:  "~/data/wmt14/en-de/target.vocab.pkl"
+
+number_of_gpus:       1
+seed:                 80420
+epochs:               150
+
+dataset:                "TranslationDataset"
+load_datset_in_memory:  True
+epoch_split:            20
+batch_size:             1700   # [target tokens without padding] [1024,2048]
+batch_size_search:      128    # [target tokens without padding]
+max_sentence_length:    128
+
+threaded_data_loading:  False
+score_batching:         False
+force_eager_execution:  False
+
+checkpoints:                  True
+checkpoint_strategy:          'All' # ['All', 'Best']
+checkpoint_frequency:         1
+delay_checkpointing_to_epoch: 15
+
+early_abort:        True
+ckpts_till_abort:   35
+
+model:      'Transformer'
+encL:       6
+decL:       6
+model_dim:  1024
+ff_dim:     4096
+dropout:    0.3
+nHeads:     16
+tiew:       True
+
+initializer:              'GlorotUniform' # ['VarianceScaling', 'GlorotUniform']
+variance_scaling_scale:   0.78
+
+score:            'LabelSmoothingCrossEntropy'
+label_smoothing:  0.1
+
+optimizer:    'WarmupAdam'
+warmup:       4000
+lr_scale:     1.0
+update_freq:  16
+
+search_algorithm:   'BeamFast' # ['Greedy', 'BeamFast', 'BeamLong']
+beam_size:          12
+length_norm:        True

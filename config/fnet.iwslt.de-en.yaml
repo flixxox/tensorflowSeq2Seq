@@ -1,0 +1,71 @@
+# Pipeline Arguments
+qsub_mem_train:   '16G'
+qsub_time_train:  '18:00:00'
+qsub_mem_search:  '8G'
+qsub_time_search: '2:00:00'
+
+train_src:  "~/data/iwslt/de-en/train.de"
+train_tgt:  "~/data/iwslt/de-en/train.en"
+
+dev_src:    "~/data/iwslt/de-en/dev.de"
+dev_tgt:    "~/data/iwslt/de-en/dev.en"
+dev_ref:    "~/data/iwslt/de-en/raw/dev.en"
+
+test_src:   "~/data/iwslt/de-en/test.de"
+test_tgt:   "~/data/iwslt/de-en/test.en"
+test_ref:   "~/data/iwslt/de-en/raw/test.en"
+
+quant_src:  "~/data/iwslt/de-en/dev.de"
+quant_tgt:  "~/data/iwslt/de-en/dev.en"
+
+vocab_src:  "~/data/iwslt/de-en/source.vocab.pkl"
+vocab_tgt:  "~/data/iwslt/de-en/target.vocab.pkl"
+
+number_of_gpus:       1
+seed:                 80420
+epochs:               150
+
+dataset:                "TranslationDataset"
+load_datset_in_memory:  True
+epoch_split:            1
+batch_size:             2048  # [target tokens without padding] [1024,2048]
+batch_size_search:      256   # [target tokens without padding]
+max_sentence_length:    128
+
+threaded_data_loading:  True
+score_batching:         False
+force_eager_execution:  False
+
+checkpoints:            True
+checkpoint_strategy:    'All' # ['All', 'Best']
+checkpoint_frequency:   1
+
+early_abort:        True
+ckpts_till_abort:   35
+
+model:      'FNet'
+encL:       6
+decL:       6
+model_dim:  512
+ff_dim:     1024
+dropout:    0.3
+nHeads:     8
+tiew:       True
+
+use_rfft:         True
+multi_head_fft:   True
+
+initializer:              'GlorotUniform' # ['VarianceScaling', 'GlorotUniform']
+variance_scaling_scale:   0.78
+
+score:            'LabelSmoothingCrossEntropy'
+label_smoothing:  0.1
+
+optimizer:    'WarmupAdam'
+warmup:       4000
+lr_scale:     2.0
+update_freq:  8
+
+search_algorithm:   'BeamFast' # ['Greedy', 'BeamFast', 'BeamLong']
+beam_size:          12
+length_norm:        True
